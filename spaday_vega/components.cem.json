@@ -1,0 +1,54 @@
+{
+  "schemaVersion": "1.0.0",
+  "modules": [
+    {
+      "path": "src/ts/index.ts",
+      "declarations": [
+        {
+          "kind": "class",
+          "name": "VegaChart",
+          "customElement": true,
+          "tagName": "vega-chart",
+          "summary": "A responsive Vega or Vega-Lite visualization driven by a declarative specification.",
+          "attributes": [
+            {
+              "name": "spec",
+              "type": { "text": "unknown" },
+              "description": "A Vega or Vega-Lite specification object, or a URL accepted by Vega-Embed."
+            },
+            {
+              "name": "options",
+              "type": { "text": "unknown" },
+              "description": "Additional serializable Vega-Embed options."
+            },
+            {
+              "name": "renderer",
+              "type": { "text": "'svg' | 'canvas'" },
+              "default": "'svg'",
+              "description": "The Vega renderer."
+            },
+            {
+              "name": "actions",
+              "type": { "text": "boolean" },
+              "default": "false",
+              "description": "Whether Vega-Embed shows its action menu."
+            }
+          ],
+          "events": [
+            {
+              "name": "vega-ready",
+              "type": { "text": "CustomEvent" },
+              "description": "Dispatched after the specification has rendered."
+            },
+            {
+              "name": "vega-error",
+              "type": { "text": "CustomEvent" },
+              "description": "Dispatched when Vega-Embed cannot render the specification."
+            }
+          ],
+          "slots": []
+        }
+      ]
+    }
+  ]
+}
