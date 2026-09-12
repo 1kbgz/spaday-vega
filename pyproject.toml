@@ -41,6 +41,7 @@ examples = [
     "starlette",
     "transports>=0.8,<0.9",
     "uvicorn",
+    "websockets",
 ]
 develop = [
     "build",
@@ -61,6 +62,7 @@ develop = [
     "ty",
     "uv",
     "uvicorn",
+    "websockets",
     "wheel",
 ]
 
