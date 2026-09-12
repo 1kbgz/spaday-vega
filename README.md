@@ -33,9 +33,6 @@ The bundled `<vega-chart>` custom element also accepts serializable Vega-Embed `
 
 This first pass accepts declarative specifications. It does not wrap every method in Vega's View API.
 
-> [!NOTE]
-> This library was generated using [copier](https://copier.readthedocs.io/en/stable/) from the [Base Python Project Template repository](https://github.com/python-project-templates/base).
-
 ## Browser examples
 
 - [Open the chart example](https://1kbgz.github.io/spaday-vega/lite/) ([source](spaday_vega/example.py)).
@@ -50,3 +47,6 @@ python -m spaday_vega.example
 ```
 
 Open `http://127.0.0.1:8028` for the example.
+
+> [!NOTE]
+> This library was generated using [copier](https://copier.readthedocs.io/en/stable/) from the [Base Python Project Template repository](https://github.com/python-project-templates/base).
