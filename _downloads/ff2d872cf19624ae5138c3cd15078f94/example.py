@@ -1,6 +1,6 @@
 """Charts updated by Python through Spaday and transports."""
 
-import math
+from typing import Literal
 
 import transports
 from pydantic import BaseModel, Field, model_validator
@@ -10,183 +10,23 @@ from spaday.components.shell import App, Body, Main, Nav
 from starlette.routing import WebSocketRoute
 
 from . import VegaChart, package
-
-
-def line_values(tick: int) -> list[dict]:
-    base = [18, 25, 22, 31, 28, 36]
-    return [
-        {
-            "label": f"{hour:02}:00",
-            "value": value + round(math.sin((tick + index) / 1.4) * 4),
-        }
-        for index, (hour, value) in enumerate(zip(range(9, 15), base, strict=True))
-    ]
-
-
-def bar_values(tick: int) -> list[dict]:
-    return [
-        {
-            "category": category,
-            "total": total + round(math.sin((tick + index) / 1.3) * 8),
-        }
-        for index, (category, total) in enumerate([("Alpha", 34), ("Beta", 55), ("Gamma", 42), ("Delta", 67)])
-    ]
-
-
-def scatter_values(tick: int) -> list[dict]:
-    points = [
-        ("A", 12, 18),
-        ("A", 20, 31),
-        ("B", 28, 24),
-        ("B", 35, 42),
-        ("C", 44, 37),
-        ("C", 51, 55),
-    ]
-    return [
-        {
-            "group": group,
-            "x": x + round(math.sin((tick + index) / 1.8) * 4),
-            "y": y + round(math.cos((tick + index) / 1.5) * 4),
-        }
-        for index, (group, x, y) in enumerate(points)
-    ]
-
-
-def line_spec(tick: int) -> dict:
-    return {
-        "$schema": "https://vega.github.io/schema/vega/v6.json",
-        "description": "Values supplied by Python",
-        "width": 900,
-        "height": 250,
-        "padding": 8,
-        "autosize": {"type": "fit", "contains": "padding", "resize": True},
-        "data": [{"name": "values", "values": line_values(tick)}],
-        "scales": [
-            {
-                "name": "x",
-                "type": "point",
-                "domain": {"data": "values", "field": "label"},
-                "range": "width",
-            },
-            {
-                "name": "y",
-                "type": "linear",
-                "domain": {"data": "values", "field": "value"},
-                "range": "height",
-                "nice": True,
-                "zero": True,
-            },
-        ],
-        "axes": [
-            {"orient": "bottom", "scale": "x", "title": None},
-            {"orient": "left", "scale": "y", "title": "Value"},
-        ],
-        "marks": [
-            {
-                "type": "line",
-                "from": {"data": "values"},
-                "encode": {
-                    "update": {
-                        "x": {"scale": "x", "field": "label"},
-                        "y": {"scale": "y", "field": "value"},
-                        "stroke": {"value": "#2563eb"},
-                        "strokeWidth": {"value": 3},
-                        "interpolate": {"value": "monotone"},
-                    }
-                },
-            },
-            {
-                "type": "symbol",
-                "from": {"data": "values"},
-                "encode": {
-                    "update": {
-                        "x": {"scale": "x", "field": "label"},
-                        "y": {"scale": "y", "field": "value"},
-                        "size": {"value": 70},
-                        "fill": {"value": "#2563eb"},
-                        "tooltip": {"signal": "datum.label + ': ' + datum.value"},
-                    }
-                },
-            },
-        ],
-    }
-
-
-def bar_spec(tick: int) -> dict:
-    return {
-        "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
-        "description": "Category totals supplied by Python",
-        "width": "container",
-        "height": 240,
-        "data": {"values": bar_values(tick)},
-        "mark": {"type": "bar", "cornerRadiusEnd": 4, "color": "#2563eb"},
-        "encoding": {
-            "x": {
-                "field": "total",
-                "type": "quantitative",
-                "axis": {"title": "Total"},
-            },
-            "y": {
-                "field": "category",
-                "type": "nominal",
-                "axis": {"title": None},
-            },
-            "tooltip": [
-                {"field": "category", "type": "nominal"},
-                {"field": "total", "type": "quantitative"},
-            ],
-        },
-        "config": {"background": "transparent", "view": {"stroke": None}},
-    }
-
-
-def scatter_spec(tick: int) -> dict:
-    return {
-        "$schema": "https://vega.github.io/schema/vega-lite/v6.json",
-        "description": "Points supplied by Python",
-        "width": "container",
-        "height": 240,
-        "data": {"values": scatter_values(tick)},
-        "mark": {"type": "point", "filled": True, "size": 180},
-        "encoding": {
-            "x": {
-                "field": "x",
-                "type": "quantitative",
-                "title": "X value",
-                "scale": {"domain": [0, 60]},
-            },
-            "y": {
-                "field": "y",
-                "type": "quantitative",
-                "title": "Y value",
-                "scale": {"domain": [0, 60]},
-            },
-            "color": {
-                "field": "group",
-                "type": "nominal",
-                "scale": {"range": ["#2563eb", "#0f766e", "#b45309"]},
-            },
-            "tooltip": [
-                {"field": "group", "type": "nominal"},
-                {"field": "x", "type": "quantitative"},
-                {"field": "y", "type": "quantitative"},
-            ],
-        },
-        "config": {"background": "transparent", "view": {"stroke": None}},
-    }
+from .example_charts import bar_spec, bar_values, line_signals, line_spec, line_values, scatter_spec, scatter_values
 
 
 class ChartState(BaseModel):
     update_count: int = 0
-    line_spec: dict = Field(default_factory=dict)
-    bar_spec: dict = Field(default_factory=dict)
-    scatter_spec: dict = Field(default_factory=dict)
+    hovered: str = "None"
+    line_data: dict[str, list[dict]] = Field(default_factory=dict)
+    line_signals: dict[str, int] = Field(default_factory=dict)
+    bar_data: dict[str, list[dict]] = Field(default_factory=dict)
+    scatter_data: dict[str, list[dict]] = Field(default_factory=dict)
 
     @model_validator(mode="after")
-    def update_specs(self):
-        self.line_spec = line_spec(self.update_count)
-        self.bar_spec = bar_spec(self.update_count)
-        self.scatter_spec = scatter_spec(self.update_count)
+    def update_data(self):
+        self.line_data = {"values": line_values(self.update_count)}
+        self.line_signals = line_signals(self.update_count)
+        self.bar_data = {"values": bar_values(self.update_count)}
+        self.scatter_data = {"values": scatter_values(self.update_count)}
         return self
 
 
@@ -209,18 +49,29 @@ def transport_clock(state: ChartState, *, bound: bool):
 
 def chart_card(
     state: ChartState,
-    field: str,
+    spec: dict,
+    data_field: str,
     title: str,
     description: str,
     *,
-    renderer: str = "svg",
+    renderer: Literal["svg", "canvas"] = "svg",
     bound: bool,
+    signals_field: str | None = None,
 ):
-    chart = VegaChart(renderer=renderer, actions=False)
+    chart = VegaChart(
+        spec=spec,
+        data=None if bound else getattr(state, data_field),
+        signals=None if bound or signals_field is None else getattr(state, signals_field),
+        signal_listeners=["hovered"] if signals_field else None,
+        renderer=renderer,
+        actions=False,
+    )
     if bound:
-        chart.bind("spec", f"charts.{field}")
-    else:
-        chart = VegaChart(spec=getattr(state, field), renderer=renderer, actions=False)
+        chart.bind("data", f"charts.{data_field}")
+        if signals_field:
+            chart.bind("signals", f"charts.{signals_field}")
+    if signals_field:
+        chart.on("vega-signal", SendPatch("charts", "hovered", event_prop("detail.value")))
     return element(
         "article",
         element("h2", title),
@@ -243,30 +94,44 @@ def build_page(state: ChartState, *, bound: bool):
                     element("h1", "Vega charts"),
                     element(
                         "p",
-                        "Each update travels to Python through Spaday and transports, then returns as a new chart specification.",
+                        "Each update travels to Python through Spaday and transports, then updates a named Vega dataset.",
                     ),
                     transport_clock(state, bound=bound),
+                    element(
+                        "p",
+                        "Hovered point: ",
+                        (
+                            element("strong", id="hovered-point").bind("textContent", "charts.hovered")
+                            if bound
+                            else element("strong", state.hovered, id="hovered-point")
+                        ),
+                        class_="hovered-point",
+                    ),
                     class_="intro",
                 ),
                 element(
                     "section",
                     chart_card(
                         state,
-                        "line_spec",
+                        line_spec(),
+                        "line_data",
                         "Live values",
                         "A native Vega chart using values returned by Python.",
                         bound=bound,
+                        signals_field="line_signals",
                     ),
                     chart_card(
                         state,
-                        "bar_spec",
+                        bar_spec(),
+                        "bar_data",
                         "Category totals",
                         "A Vega-Lite bar chart using values returned by Python.",
                         bound=bound,
                     ),
                     chart_card(
                         state,
-                        "scatter_spec",
+                        scatter_spec(),
+                        "scatter_data",
                         "Value comparison",
                         "A Vega-Lite scatter plot using values returned by Python.",
                         renderer="canvas",
@@ -297,10 +162,13 @@ for frame in worker_server.open("browser", "msgpack"):
 
 def process_worker_intent(intent: dict) -> None:
     detail = intent["detail"]
-    if detail["model"] != "charts" or detail["field"] != "update_count":
+    if detail["model"] != "charts" or detail["field"] not in {"hovered", "update_count"}:
         return
     proposal = worker_client.model(worker_model_id, ChartState).model_copy()
-    proposal.update_count = int(detail["value"])
+    if detail["field"] == "update_count":
+        proposal.update_count = int(detail["value"])
+    else:
+        proposal.hovered = str(detail["value"])
     outbound = worker_client.edit(worker_model_id, transports.to_value(proposal))
     for frame in worker_server.recv("browser", outbound)["browser"]:
         worker_client.recv(frame)
