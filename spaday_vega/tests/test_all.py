@@ -11,14 +11,26 @@ ROOT = Path(__file__).parent.parent
 
 def test_chart_serializes_declarative_properties():
     spec = {"$schema": "https://vega.github.io/schema/vega-lite/v6.json", "mark": "bar"}
-    node = VegaChart(spec=spec, options={"theme": "quartz"}, renderer="canvas", actions=True).to_node()
+    node = VegaChart(
+        spec=spec,
+        data={"values": [{"category": "A", "value": 12}]},
+        signals={"threshold": 15},
+        signal_listeners=["selected"],
+        options={"theme": "quartz"},
+        renderer="canvas",
+        actions=True,
+    ).to_node()
 
     assert node["tag"] == "vega-chart"
     assert node["props"]["spec"]["Map"]["mark"] == {"Str": "bar"}
     assert node["props"]["spec"]["Map"]["$schema"] == {"Str": "https://vega.github.io/schema/vega-lite/v6.json"}
+    assert node["props"]["data"]["Map"]["values"]["List"][0]["Map"]["category"] == {"Str": "A"}
+    assert node["props"]["signals"] == {"Map": {"threshold": {"Int": 15}}}
+    assert node["props"]["signal_listeners"] == {"List": [{"Str": "selected"}]}
     assert node["props"]["options"] == {"Map": {"theme": {"Str": "quartz"}}}
     assert node["props"]["renderer"] == {"Str": "canvas"}
     assert node["props"]["actions"] == {"Bool": True}
+    assert "vega-signal" in VegaChart.schema.events
 
 
 def test_package_drives_bootstrap_assets_and_catalog():
