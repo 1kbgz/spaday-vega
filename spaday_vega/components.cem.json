@@ -17,6 +17,21 @@
               "description": "A Vega or Vega-Lite specification object, or a URL accepted by Vega-Embed."
             },
             {
+              "name": "data",
+              "type": { "text": "unknown" },
+              "description": "Rows keyed by Vega dataset name. Updates use the current Vega view without re-embedding the specification."
+            },
+            {
+              "name": "signals",
+              "type": { "text": "unknown" },
+              "description": "Values keyed by Vega signal name. Updates use the current Vega view without re-embedding the specification."
+            },
+            {
+              "name": "signal_listeners",
+              "type": { "text": "unknown" },
+              "description": "Vega signal names re-dispatched through vega-signal events."
+            },
+            {
               "name": "options",
               "type": { "text": "unknown" },
               "description": "Additional serializable Vega-Embed options."
@@ -39,6 +54,16 @@
               "name": "vega-ready",
               "type": { "text": "CustomEvent" },
               "description": "Dispatched after the specification has rendered."
+            },
+            {
+              "name": "vega-update",
+              "type": { "text": "CustomEvent" },
+              "description": "Dispatched after named datasets or input signals have updated."
+            },
+            {
+              "name": "vega-signal",
+              "type": { "text": "CustomEvent" },
+              "description": "A watched Vega signal changed; detail contains its name and value."
             },
             {
               "name": "vega-error",
