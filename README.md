@@ -1,4 +1,9 @@
-# spaday-vega
+<a href="https://github.com/1kbgz/spaday-vega">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://github.com/1kbgz/spaday-vega/raw/main/docs/img/logo-dark.webp?raw=true">
+    <img alt="spaday-vega logo, a star field inside a browser window" src="https://github.com/1kbgz/spaday-vega/raw/main/docs/img/logo-light.webp?raw=true" width="1200">
+  </picture>
+</a>
 
 Declarative [Vega](https://vega.github.io/vega/) and [Vega-Lite](https://vega.github.io/vega-lite/) visualizations for [spaday](https://github.com/1kbgz/spaday).
 
