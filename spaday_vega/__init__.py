@@ -5,7 +5,7 @@ from spaday import ComponentPackage
 
 from .components import VegaChart
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 _EXTENSION = Path(__file__).parent / "extension"
 _VERSIONS = _EXTENSION / "versions.json"

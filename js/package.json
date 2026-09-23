@@ -1,6 +1,6 @@
 {
   "name": "spaday-vega",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Vega and Vega-Lite visualizations for spaday",
   "repository": "git@github.com:1kbgz/spaday-vega.git",
   "author": "1kbgz <dev@1kbgz.com>",
