@@ -9,7 +9,12 @@ hidden: true
 
 ```
 
-# spaday-vega
+<a href="https://github.com/1kbgz/spaday-vega">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://github.com/1kbgz/spaday-vega/raw/main/docs/img/logo-dark.webp?raw=true">
+    <img alt="spaday-vega logo, a star field inside a browser window" src="https://github.com/1kbgz/spaday-vega/raw/main/docs/img/logo-light.webp?raw=true" width="600">
+  </picture>
+</a>
 
 Declarative [Vega](https://vega.github.io/vega/) and [Vega-Lite](https://vega.github.io/vega-lite/) visualizations for [spaday](https://github.com/1kbgz/spaday).
 
@@ -47,6 +52,24 @@ app = serve(page, packages=[package], title="Vega-Lite chart")
 The bundled `<vega-chart>` custom element dispatches `vega-ready` after rendering, `vega-update` after applying data or signals, and `vega-error` when either operation fails. It also accepts serializable Vega-Embed `options`. Updating `spec`, `options`, `renderer`, or `actions` redraws the visualization and finalizes the previous view.
 
 The element exposes its Vega `view` property for JavaScript code that needs the rest of the View API.
+
+## Theming
+
+Chart defaults follow spaday's shell palette. Set a component token on the chart or any ancestor to
+theme Vega without changing its specification:
+
+| Token                   | Controls                               | Shell fallback  |
+| ----------------------- | -------------------------------------- | --------------- |
+| `--spa-vega-background` | Chart background                       | `--spa-surface` |
+| `--spa-vega-text`       | Titles, guides, and text marks         | `--spa-muted`   |
+| `--spa-vega-axis`       | Axis domains and ticks                 | `--spa-muted`   |
+| `--spa-vega-grid`       | Grid lines and legend gradient outline | `--spa-border`  |
+| `--spa-vega-mark`       | Default mark color                     | `--spa-accent`  |
+| `--spa-vega-danger`     | Rendering errors                       | `--spa-danger`  |
+
+These are Vega configuration defaults. Colors declared by the specification or `options.config`
+still win. Python authors can discover the same mapping as `spaday_vega.TOKENS` and set a token with
+`VegaChart(...).css(spa_vega_mark="#4c78a8")`.
 
 ## Browser examples
 
