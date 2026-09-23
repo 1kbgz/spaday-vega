@@ -1,10 +1,11 @@
 import ast
+import re
 from pathlib import Path
 
 from spaday import generate
 from spaday.bootstrap import bootstrap
 
-from spaday_vega import VegaChart, package
+from spaday_vega import TOKENS, VegaChart, package
 
 ROOT = Path(__file__).parent.parent
 
@@ -43,3 +44,10 @@ def test_package_drives_bootstrap_assets_and_catalog():
 def test_generated_component_is_current():
     fresh = generate(str(ROOT / "components.cem.json"))
     assert ast.dump(ast.parse(fresh)) == ast.dump(ast.parse((ROOT / "components.py").read_text(encoding="utf-8")))
+
+
+def test_tokens_document_exactly_what_the_stylesheet_exposes():
+    css = re.sub(r"\s+", "", (ROOT.parent / "js" / "src" / "css" / "index.css").read_text(encoding="utf-8"))
+    read = set(re.findall(r"var\((--spa-vega-[a-z-]+)[,)]", css))
+    assert read == {prop for prop, _ in TOKENS.values()}
+    assert not re.findall(r"(?<![-\w])(--spa-vega-[a-z-]+):", css)

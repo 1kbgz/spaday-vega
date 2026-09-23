@@ -42,6 +42,24 @@ The bundled `<vega-chart>` custom element dispatches `vega-ready` after renderin
 
 The element exposes its Vega `view` property for JavaScript code that needs the rest of the View API.
 
+## Theming
+
+Chart defaults follow spaday's shell palette. Set a component token on the chart or any ancestor to
+theme Vega without changing its specification:
+
+| Token                   | Controls                               | Shell fallback  |
+| ----------------------- | -------------------------------------- | --------------- |
+| `--spa-vega-background` | Chart background                       | `--spa-surface` |
+| `--spa-vega-text`       | Titles, guides, and text marks         | `--spa-muted`   |
+| `--spa-vega-axis`       | Axis domains and ticks                 | `--spa-muted`   |
+| `--spa-vega-grid`       | Grid lines and legend gradient outline | `--spa-border`  |
+| `--spa-vega-mark`       | Default mark color                     | `--spa-accent`  |
+| `--spa-vega-danger`     | Rendering errors                       | `--spa-danger`  |
+
+These are Vega configuration defaults. Colors declared by the specification or `options.config`
+still win. Python authors can discover the same mapping as `spaday_vega.TOKENS` and set a token with
+`VegaChart(...).css(spa_vega_mark="#4c78a8")`.
+
 ## Browser examples
 
 - [Open the chart example](https://1kbgz.github.io/spaday-vega/lite/) ([source](spaday_vega/example.py)).

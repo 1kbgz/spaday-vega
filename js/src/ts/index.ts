@@ -10,6 +10,24 @@ type Renderer = "svg" | "canvas";
 type NamedData = Record<string, Record<string, unknown>[]>;
 type SignalValues = Record<string, unknown>;
 type SignalListener = (name: string, value: unknown) => void;
+type EmbedConfig = Exclude<NonNullable<EmbedOptions["config"]>, string>;
+
+function mergeConfig(base: EmbedConfig, override: EmbedConfig): EmbedConfig {
+  const merged = { ...base } as Record<string, unknown>;
+  for (const [key, value] of Object.entries(override)) {
+    const current = merged[key];
+    merged[key] =
+      current &&
+      value &&
+      typeof current === "object" &&
+      typeof value === "object" &&
+      !Array.isArray(current) &&
+      !Array.isArray(value)
+        ? mergeConfig(current as EmbedConfig, value as EmbedConfig)
+        : value;
+  }
+  return merged as EmbedConfig;
+}
 
 /** A responsive Vega or Vega-Lite visualization as a custom element. */
 export class VegaChart extends HTMLElement {
@@ -232,6 +250,53 @@ export class VegaChart extends HTMLElement {
     );
   }
 
+  private token(name: string, fallback: string): string {
+    const value = getComputedStyle(this).getPropertyValue(name).trim();
+    return value || fallback;
+  }
+
+  private themeConfig(): EmbedConfig {
+    const background = this.token("--_spa-vega-background", "transparent");
+    const text = this.token("--_spa-vega-text", "#000");
+    const axis = this.token("--_spa-vega-axis", "#888");
+    const grid = this.token("--_spa-vega-grid", "#ddd");
+    const mark = this.token("--_spa-vega-mark", "#4c78a8");
+    return {
+      background,
+      mark: { color: mark },
+      arc: { fill: mark },
+      area: { fill: mark },
+      line: { stroke: mark },
+      path: { stroke: mark },
+      rect: { fill: mark },
+      rule: { stroke: text },
+      shape: { stroke: mark },
+      symbol: { fill: mark },
+      text: { fill: text },
+      trail: { fill: mark },
+      axis: {
+        domainColor: axis,
+        gridColor: grid,
+        labelColor: text,
+        tickColor: axis,
+        titleColor: text,
+      },
+      legend: {
+        gradientStrokeColor: grid,
+        labelColor: text,
+        symbolBaseStrokeColor: axis,
+        titleColor: text,
+      },
+      title: { color: text, subtitleColor: text },
+      style: {
+        "guide-label": { fill: text },
+        "guide-title": { fill: text },
+        "group-title": { fill: text },
+        "group-subtitle": { fill: text },
+      },
+    };
+  }
+
   private async render(): Promise<void> {
     const spec = this._spec;
     if (!spec) return;
@@ -250,8 +315,13 @@ export class VegaChart extends HTMLElement {
     this.replaceChildren(container);
 
     try {
+      const optionConfig = this._options.config;
       const result = await embed(container, spec, {
         ...this._options,
+        config:
+          optionConfig && typeof optionConfig === "object"
+            ? mergeConfig(this.themeConfig(), optionConfig)
+            : (optionConfig ?? this.themeConfig()),
         actions: this._actions,
         renderer: this._renderer,
       });

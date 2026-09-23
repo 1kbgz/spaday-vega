@@ -170,6 +170,57 @@ test("renders a native Vega specification to canvas", async ({ page }) => {
   await expect(chart).toHaveJSProperty("renderer", "canvas");
 });
 
+test("chart defaults follow shell and package color tokens", async ({
+  page,
+}) => {
+  await page.goto("/dist/index.html");
+  await page.waitForFunction(() => customElements.get("vega-chart"));
+  await page.evaluate((spec) => {
+    const host = document.createElement("div");
+    host.style.setProperty("--spa-surface", "rgb(1, 2, 3)");
+    host.style.setProperty("--spa-muted", "rgb(4, 5, 6)");
+    host.style.setProperty("--spa-border", "rgb(7, 8, 9)");
+    host.style.setProperty("--spa-accent", "rgb(10, 11, 12)");
+    host.style.setProperty("--spa-vega-mark", "rgb(13, 14, 15)");
+    const chart = document.createElement("vega-chart");
+    chart.spec = spec;
+    chart.data = { values: [{ category: "A", value: 12 }] };
+    host.appendChild(chart);
+    document.body.appendChild(host);
+  }, liteSpec());
+
+  const chart = page.locator("vega-chart");
+  await expect(chart).toHaveAttribute("data-rendered", "true");
+  const svg = await chart.evaluate((element) => element.view.toSVG());
+  expect(svg).toContain("rgb(1, 2, 3)");
+  expect(svg).toContain("rgb(4, 5, 6)");
+  expect(svg).toContain("rgb(7, 8, 9)");
+  expect(svg).toContain("rgb(13, 14, 15)");
+});
+
+test("an explicit Vega-Lite mark color outranks the package token", async ({
+  page,
+}) => {
+  await page.goto("/dist/index.html");
+  await page.waitForFunction(() => customElements.get("vega-chart"));
+  await page.evaluate((spec) => {
+    const chart = document.createElement("vega-chart");
+    chart.style.setProperty("--spa-vega-mark", "rgb(13, 14, 15)");
+    chart.spec = {
+      ...spec,
+      mark: { type: "bar", color: "rgb(90, 91, 92)" },
+    };
+    chart.data = { values: [{ category: "A", value: 12 }] };
+    document.body.appendChild(chart);
+  }, liteSpec());
+
+  const chart = page.locator("vega-chart");
+  await expect(chart).toHaveAttribute("data-rendered", "true");
+  expect(await chart.evaluate((element) => element.view.toSVG())).toContain(
+    "rgb(90, 91, 92)",
+  );
+});
+
 test("renders the Python-authored dashboard", async ({ page }) => {
   let framesReceived = 0;
   let framesSent = 0;
