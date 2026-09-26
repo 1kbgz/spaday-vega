@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from spaday import ComponentPackage
+from spaday import ComponentPackage, Token
 
 from .components import VegaChart
 
@@ -18,16 +18,15 @@ package = ComponentPackage(
     provides=json.loads(_VERSIONS.read_text(encoding="utf-8")) if _VERSIONS.exists() else {},
 )
 
-#: ``css()`` kwarg → (CSS custom property, what it controls), in the shape of
-#: :data:`spaday.theme.SHELL_TOKENS`. Values become Vega configuration defaults, so an explicit
+#: ``css()`` kwarg → (CSS custom property, what it controls). Values become Vega configuration defaults, so an explicit
 #: specification or ``options.config`` value still wins.
 TOKENS = {
-    "spa_vega_background": ("--spa-vega-background", "chart background (defaults to --spa-surface)"),
-    "spa_vega_text": ("--spa-vega-text", "title, axis, legend, and text-mark color (defaults to --spa-muted)"),
-    "spa_vega_axis": ("--spa-vega-axis", "axis domain and tick color (defaults to --spa-muted)"),
-    "spa_vega_grid": ("--spa-vega-grid", "axis grid and legend gradient outline (defaults to --spa-border)"),
-    "spa_vega_mark": ("--spa-vega-mark", "default mark color (defaults to --spa-accent)"),
-    "spa_vega_danger": ("--spa-vega-danger", "rendering error color (defaults to --spa-danger)"),
+    "spa_vega_background": Token("--spa-vega-background", "chart background", fallback="--spa-surface"),
+    "spa_vega_text": Token("--spa-vega-text", "title, axis, legend, and text-mark color", fallback="--spa-muted"),
+    "spa_vega_axis": Token("--spa-vega-axis", "axis domain and tick color", fallback="--spa-muted"),
+    "spa_vega_grid": Token("--spa-vega-grid", "axis grid and legend gradient outline", fallback="--spa-border"),
+    "spa_vega_mark": Token("--spa-vega-mark", "default mark color", fallback="--spa-accent"),
+    "spa_vega_danger": Token("--spa-vega-danger", "rendering error color", fallback="--spa-danger"),
 }
 
 __all__ = ["TOKENS", "VegaChart", "package"]
