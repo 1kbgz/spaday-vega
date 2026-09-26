@@ -51,3 +51,13 @@ def test_tokens_document_exactly_what_the_stylesheet_exposes():
     read = set(re.findall(r"var\((--spa-vega-[a-z-]+)[,)]", css))
     assert read == {prop for prop, _ in TOKENS.values()}
     assert not re.findall(r"(?<![-\w])(--spa-vega-[a-z-]+):", css)
+
+
+def test_structured_fallbacks_match_the_stylesheet():
+    css = re.sub(r"\s+", "", (ROOT.parent / "js" / "src" / "css" / "index.css").read_text(encoding="utf-8"))
+    for token in TOKENS.values():
+        prop = token.property
+        fallback = token.fallback
+        private = prop.replace("--spa-", "--_spa-")
+        [definition] = re.findall(rf"{private}:([^;]+);", css)
+        assert f"var({fallback}," in definition
