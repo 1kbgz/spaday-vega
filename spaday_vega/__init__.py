@@ -22,7 +22,7 @@ package = ComponentPackage(
 #: specification or ``options.config`` value still wins.
 TOKENS = {
     "spa_vega_background": Token("--spa-vega-background", "chart background", fallback="--spa-surface"),
-    "spa_vega_text": Token("--spa-vega-text", "title, axis, legend, and text-mark color", fallback="--spa-muted"),
+    "spa_vega_text": Token("--spa-vega-text", "title, axis, legend, and text-mark color", fallback="--spa-text"),
     "spa_vega_axis": Token("--spa-vega-axis", "axis domain and tick color", fallback="--spa-muted"),
     "spa_vega_grid": Token("--spa-vega-grid", "axis grid and legend gradient outline", fallback="--spa-border"),
     "spa_vega_mark": Token("--spa-vega-mark", "default mark color", fallback="--spa-accent"),

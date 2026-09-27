@@ -3,7 +3,7 @@ vega-chart {
     --spa-vega-background,
     var(--spa-surface, transparent)
   );
-  --_spa-vega-text: var(--spa-vega-text, var(--spa-muted, #000));
+  --_spa-vega-text: var(--spa-vega-text, var(--spa-text, #000));
   --_spa-vega-axis: var(--spa-vega-axis, var(--spa-muted, #888));
   --_spa-vega-grid: var(--spa-vega-grid, var(--spa-border, #ddd));
   --_spa-vega-mark: var(--spa-vega-mark, var(--spa-accent, #4c78a8));
