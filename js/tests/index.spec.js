@@ -178,7 +178,8 @@ test("chart defaults follow shell and package color tokens", async ({
   await page.evaluate((spec) => {
     const host = document.createElement("div");
     host.style.setProperty("--spa-surface", "rgb(1, 2, 3)");
-    host.style.setProperty("--spa-muted", "rgb(4, 5, 6)");
+    host.style.setProperty("--spa-text", "rgb(4, 5, 6)");
+    host.style.setProperty("--spa-muted", "rgb(14, 15, 16)");
     host.style.setProperty("--spa-border", "rgb(7, 8, 9)");
     host.style.setProperty("--spa-accent", "rgb(10, 11, 12)");
     host.style.setProperty("--spa-vega-mark", "rgb(13, 14, 15)");
@@ -194,6 +195,7 @@ test("chart defaults follow shell and package color tokens", async ({
   const svg = await chart.evaluate((element) => element.view.toSVG());
   expect(svg).toContain("rgb(1, 2, 3)");
   expect(svg).toContain("rgb(4, 5, 6)");
+  expect(svg).toContain("rgb(14, 15, 16)");
   expect(svg).toContain("rgb(7, 8, 9)");
   expect(svg).toContain("rgb(13, 14, 15)");
 });
