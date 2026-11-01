@@ -39,7 +39,7 @@ vega = "spaday_vega:package"
 [project.optional-dependencies]
 examples = [
     "starlette",
-    "transports>=0.8,<0.9",
+    "transports>=0.8,<0.11",
     "uvicorn",
     "websockets",
 ]
@@ -57,7 +57,7 @@ develop = [
     "pytest-cov",
     "ruff",
     "starlette",
-    "transports>=0.8,<0.9",
+    "transports>=0.8,<0.11",
     "twine",
     "ty",
     "uv",
