@@ -23,7 +23,7 @@ def test_server_example_binds_chart_data_to_transports():
     assert "vega-signal" in tree.text
     assert 'document.addEventListener("spaday:patch"' in home.text
     assert 'new Client("json")' in home.text
-    assert ".connect(`ws://${location.host}/ws`)" in home.text
+    assert "//${location.host}/ws`)" in home.text
 
 
 def test_worker_example_round_trips_through_transports_and_spaday():

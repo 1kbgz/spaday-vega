@@ -13,7 +13,7 @@ authors = [
 description = "Vega and Vega-Lite visualizations for spaday"
 readme = "README.md"
 license = { text = "Apache-2.0" }
-version = "0.2.0"
+version = "0.2.1"
 requires-python = ">=3.11"
 keywords = []
 
@@ -39,7 +39,7 @@ vega = "spaday_vega:package"
 [project.optional-dependencies]
 examples = [
     "starlette",
-    "transports>=0.8,<0.9",
+    "transports>=0.8,<0.13",
     "uvicorn",
     "websockets",
 ]
@@ -57,7 +57,7 @@ develop = [
     "pytest-cov",
     "ruff",
     "starlette",
-    "transports>=0.8,<0.9",
+    "transports>=0.8,<0.13",
     "twine",
     "ty",
     "uv",
@@ -73,7 +73,7 @@ Repository = "https://github.com/1kbgz/spaday-vega"
 Homepage = "https://github.com/1kbgz/spaday-vega"
 
 [tool.bumpversion]
-current_version = "0.2.0"
+current_version = "0.2.1"
 commit = true
 tag = true
 commit_args = "-s"
